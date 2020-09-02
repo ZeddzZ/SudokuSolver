@@ -1,6 +1,5 @@
 import Helpers.PropertiesHelper;
-import Menu.MenuEngine;
-import Menu.MenuStructure;
+import Menu.*;
 
 import java.io.IOException;
 

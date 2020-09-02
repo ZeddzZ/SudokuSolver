@@ -5,7 +5,6 @@ import Sudoku.SudokuField;
 import Sudoku.SudokuSolutions;
 import Sudoku.SudokuSolver;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -125,12 +124,10 @@ public class MenuHelper {
         String selected = scanner.nextLine();
         if (!MathHelper.tryParseInt(selected)) {
             System.out.println("Can't parse your answer! Input value should be Integer. Canceling operation.");
-            return;
         } else {
             int selectedItem = Integer.parseInt(selected);
             if (selectedItem <= 0 || selectedItem > files.size()) {
                 System.out.println("Received menu item is out of borders! Please, select value from 1 to " + files.size() + ". Canceling operation.");
-                return;
             } else {
                 readFileAndSolve(files.get(selectedItem - 1));
             }
@@ -150,6 +147,11 @@ public class MenuHelper {
         readFileAndSolve(path);
     }
 
+    public static void exitApplication() {
+        System.out.println("Exiting application.");
+        System.exit(0);
+    }
+
     private static void readFileAndSolve(String path) {
         if(!FileHelper.checkExtension(path, PropertiesHelper.getDefaultExtension())) {
             System.out.println(ExceptionMessage.getWrongFileExtensionMessage(path, PropertiesHelper.getDefaultExtension() + " Canceling operation."));
@@ -165,7 +167,6 @@ public class MenuHelper {
         sudokuSolver.solve();
         SudokuSolutions.printSolutions(sudokuSolver.getInitialField());
     }
-
 
     private static void showDirectoryItems(String path) {
         List<String> dirs = FileHelper.getDirectories(path);

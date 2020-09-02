@@ -16,6 +16,15 @@ public class MenuEngine {
         activeMenu = initialMenu;
     }
 
+    /**
+     * Sets specified menu as active menu
+     * If it is first call for this menu, adds it to usedMenus List
+     * If not, takes it from usedMenus List
+     * This approach simplifies vertical navigation from sub menus to parent menus
+     *
+     * @param newMenu
+     * Menu to become active
+     */
     public void setActiveMenu(Menu newMenu) {
         if(!usedMenus.contains(newMenu)) {
             usedMenus.add(newMenu);
@@ -24,6 +33,9 @@ public class MenuEngine {
         run();
     }
 
+    /**
+     * Showing items of active menu and initiating request for menu item selection
+     */
     public void run() {
         if(activeMenu.getMenuItems().size() == 0) {
             setActiveMenu(activeMenu.parentMenu);
@@ -32,6 +44,9 @@ public class MenuEngine {
         selectMenuItem();
     }
 
+    /**
+     * Going back from submenu to parent menu by setting last as active menu
+     */
     public void back() {
         if (activeMenu.parentMenu == null) {
             System.out.println("You are already on top level menu!");
@@ -40,13 +55,17 @@ public class MenuEngine {
         }
     }
 
+    /**
+     * Reading menu item number from console and selecting it
+     * It means executing its action (if exists) and showing sub menu for this item (if exists)
+     */
     public void selectMenuItem() {
         boolean isValueRead = false;
         Scanner scanner = new Scanner(System.in);
         while (!isValueRead) {
             System.out.println();
             System.out.print("Select menu item: ");
-            String selected = getValue(scanner);
+            String selected = scanner.nextLine();
             if (!MathHelper.tryParseInt(selected)) {
                 System.out.println("Can't parse your answer! Please, pass integer value that represents number of menu item.");
             } else {
@@ -62,9 +81,27 @@ public class MenuEngine {
         }
     }
 
-    protected String getValue(Scanner scanner) {
-        String value = scanner.nextLine();
-        return value;
+    /**
+     * Selecting menu item by its position
+     *
+     * @param selectedItem
+     * Position of menu item
+     */
+    public void initMenuItemAction(int selectedItem) {
+        if (activeMenu.parentMenu != null) {
+            if (selectedItem == activeMenu.getMenuItems().size()) {
+                //Selected "Back" value;
+                back();
+                return;
+            }
+        }
+        activeMenu.getMenuItems().get(selectedItem).doAction();
+        Menu subMenu = activeMenu.getMenuItems().get(selectedItem).subMenu;
+        if(subMenu.menuItems.size() > 0) {
+            setActiveMenu(activeMenu.getMenuItems().get(selectedItem).subMenu);
+        } else {
+            setActiveMenu(activeMenu);
+        }
     }
 
     protected int getMaxValidValue() {
@@ -76,15 +113,4 @@ public class MenuEngine {
         return menuSize + 1;
     }
 
-    protected void initMenuItemAction(int selectedItem) {
-        if (activeMenu.parentMenu != null) {
-            if (selectedItem == activeMenu.getMenuItems().size()) {
-                //Selected "Back" value;
-                back();
-                return;
-            }
-        }
-        activeMenu.getMenuItems().get(selectedItem).doAction();
-        setActiveMenu(activeMenu.getMenuItems().get(selectedItem).subMenu);
-    }
 }

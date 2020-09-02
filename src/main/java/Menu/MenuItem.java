@@ -27,14 +27,29 @@ public class MenuItem {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Menu getSubMenu() {
         return subMenu;
+    }
+
+    public void setSubMenu(Menu subMenu) {
+        this.subMenu = subMenu;
     }
 
     public Runnable getAction() {
         return action;
     }
 
+    public void setAction(Runnable action) {
+        this.action = action;
+    }
+
+    /**
+     * Performs action for this Menu Item (if it was set)
+     */
     public void doAction() {
         if (action != null) {
             action.run();
