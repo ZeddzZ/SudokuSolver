@@ -42,6 +42,14 @@ public class SudokuSolver {
         return solutionField;
     }
 
+    /**
+     * Sets for solution field cell with given coordinates specified value
+     *
+     * @param coordinates
+     * Coordinates of cell to update
+     * @param value
+     * New value to put
+     */
     private void setFieldValue(Pair<Integer, Integer> coordinates, int value) {
         solutionField.setFieldValue(coordinates, value);
     }
@@ -70,6 +78,10 @@ public class SudokuSolver {
         }while(true);
     }
 
+    /**
+     * Goes through all empty cells and add all possible values
+     * fpr current cell to possibleSolutions List
+     */
     private void addAllPossibleSolutions() {
         for (Pair<Integer, Integer> cell : emptyCells) {
             for (int value : solutionField.getPossibleValues()) {
@@ -80,34 +92,75 @@ public class SudokuSolver {
         }
     }
 
-    private boolean isPossibleToPlaceNumber(int rowNumber, int columnNumber, int number) {
-        return isVerticalPossible(columnNumber, number)
-                && isHorizontalPossible(rowNumber, number)
-                && isBlockPossible(solutionField.getBlockStart(rowNumber, columnNumber), number);
+    /**
+     * Checks if it possible for specified value to be placed on received coordinates
+     *
+     * @param rowNumber
+     * Number of row of the cell (zero based)
+     * @param columnNumber
+     * Number of column of the cell (zero based)
+     * @param value
+     * Value to check
+     * @return
+     * True if it possible to place specified value for given coordinates, false if not
+     */
+    private boolean isPossibleToPlaceNumber(int rowNumber, int columnNumber, int value) {
+        return isVerticalPossible(columnNumber, value)
+                && isHorizontalPossible(rowNumber, value)
+                && isBlockPossible(solutionField.getBlockStart(rowNumber, columnNumber), value);
     }
 
-    private boolean isVerticalPossible(int column, int number) {
+    /**
+     * Checks if it possible for specified value to be placed on given column
+     *
+     * @param column
+     * Number of column of the cell (zero based)
+     * @param value
+     * Value to check
+     * @return
+     * True if it possible to place specified value for given column, false if not
+     */
+    private boolean isVerticalPossible(int column, int value) {
         for (int i = 0; i < solutionField.getHeight(); i++) {
-            if (solutionField.getFieldValue(i, column) == number) {
+            if (solutionField.getFieldValue(i, column) == value) {
                 return false;
             }
         }
         return true;
     }
-
-    private boolean isHorizontalPossible(int row, int number) {
+    /**
+     * Checks if it possible for specified value to be placed on given row
+     *
+     * @param row
+     * Number of row of the cell (zero based)
+     * @param value
+     * Value to check
+     * @return
+     * True if it possible to place specified value for given row, false if not
+     */
+    private boolean isHorizontalPossible(int row, int value) {
         for (int j = 0; j < solutionField.getWidth(); j++) {
-            if (solutionField.getFieldValue(row, j) == number) {
+            if (solutionField.getFieldValue(row, j) == value) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean isBlockPossible(Pair<Integer, Integer> blockStart, int number) {
+    /**
+     * Checks if it possible for specified value to be placed on given block
+     *
+     * @param blockStart
+     * Coordinates of block top-left value
+     * @param value
+     * Value to check
+     * @return
+     * True if it possible to place specified value for given block, false if not
+     */
+    private boolean isBlockPossible(Pair<Integer, Integer> blockStart, int value) {
         for (int i = blockStart.getFirst(); i < blockStart.getFirst() + solutionField.getBlockHeight(); i++) {
             for (int j = blockStart.getSecond(); j < blockStart.getSecond() + solutionField.getBlockWidth(); j++) {
-                if (solutionField.getFieldValue(i, j) == number) {
+                if (solutionField.getFieldValue(i, j) == value) {
                     return false;
                 }
             }
@@ -115,16 +168,27 @@ public class SudokuSolver {
         return true;
     }
 
+    /**
+     * Goes through all field and add all cell coordinates with default value to emptyCells List
+     */
     private void populateEmptyCells() {
         for (int i =0; i < solutionField.getHeight(); i++) {
             for (int j = 0; j < solutionField.getWidth(); j++) {
-                if (solutionField.getFieldValue(i, j) == solutionField.getDefaultValue()) {
+                if (solutionField.getFieldValue(i, j) == (solutionField.getDefaultValue())) {
                     emptyCells.add(new Pair<>(i, j));
                 }
             }
         }
     }
 
+    /**
+     * Adds a possible value for specified cell to possibleSolutions Map
+     *
+     * @param coordinates
+     * Coordinates of the cell
+     * @param value
+     * Value that can be placed
+     */
     private void addPossibleSolution(Pair<Integer, Integer> coordinates, int value) {
         if (!possibleSolutions.containsKey(coordinates)) {
             possibleSolutions.put(coordinates, new ArrayList<>());
@@ -132,6 +196,13 @@ public class SudokuSolver {
         possibleSolutions.get(coordinates).add(value);
     }
 
+    /**
+     * For all solutions that contain only one possible value go through specified cells and
+     * update solution field with this value, removing this cell from possibleSolutions Map and emptyCells List
+     *
+     * @param singleSolutions
+     * Map of cells that can be filled with only one value at this iteration.
+     */
     private void unambiguousMatch(Map<Pair<Integer, Integer>, List<Integer>> singleSolutions) {
         for(Pair<Integer, Integer> coordinates: singleSolutions.keySet()) {
                 setFieldValue(coordinates, possibleSolutions.get(coordinates).get(0));
@@ -140,12 +211,26 @@ public class SudokuSolver {
         }
     }
 
+    /**
+     * Removes all data from possible  solutions map
+     */
     private void clearPossibleSolutions() {
         for(Pair<Integer, Integer> coordinates: possibleSolutions.keySet()) {
             possibleSolutions.get(coordinates).clear();
         }
+        //TODO: is it possible to replace with this line?
+        //possibleSolutions.clear();
     }
 
+    /**
+     * From list of all cells with possible values count > 1
+     * We take cell with min possible values count.
+     * For each of such solutions we create new {@see SudkuSolver}
+     * with possible value and run {@see SudokuSolver#solve()} method for it
+     *
+     * e.g. : if cell [0,0] have possible solutions [1,2,3] we create 3 new solutions
+     * with already placed 1, 2 and 3 value to [0,0] position and run solve for them
+     */
     private void ambiguousMatch() {
         if (MapHelper.filter(possibleSolutions, el -> el.getValue().size() == 0).size() > 0) {
             //Failed to solve, dead end
