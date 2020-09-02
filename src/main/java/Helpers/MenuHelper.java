@@ -184,7 +184,7 @@ public class MenuHelper {
             System.out.println(ExceptionMessage.getWrongFileExtensionMessage(path, PropertiesHelper.getDefaultExtension() + " Canceling operation."));
             return;
         }
-        SudokuField sudokuField = SudokuFieldHelper.getFieldFromFile(path);
+        SudokuField sudokuField = SudokuFieldHelper.getIntegerFieldFromFile(path);
         System.out.println("Initial field is:");
         System.out.println();
         System.out.println(sudokuField.toString());
