@@ -14,6 +14,9 @@ import java.util.Scanner;
 
 public class MenuHelper {
 
+    /**
+     * Shows properties from default properties file
+     */
     public static void showProperties() {
         Properties props = PropertiesHelper.getProperties();
         int count = 1;
@@ -23,6 +26,9 @@ public class MenuHelper {
         }
     }
 
+    /**
+     * Edits property that are already loaded (not saving to file)
+     */
     public static void editProperty() {
         showProperties();
         System.out.print("Enter name of property to change: ");
@@ -39,13 +45,16 @@ public class MenuHelper {
         System.out.println("You are going to change value of property " + propName + " from " + PropertiesHelper.getProperty(propName) + " to " + propValue + ". Are you sure (Yes/No)?");
         String confirmation = scanner.nextLine();
         if (confirmation.trim().equalsIgnoreCase("yes")) {
-            PropertiesHelper.setProperties(propName, propValue);
+            PropertiesHelper.setProperty(propName, propValue);
             System.out.println("You have successfully changed value of property " + propName + " from " + PropertiesHelper.getProperty(propName) + " to " + propValue + ".");
         } else {
             System.out.println("No confirmation was received. Reverting this change. Value of property " + propName + " remains " + PropertiesHelper.getProperty(propName) + ".");
         }
     }
 
+    /**
+     * Adds new property to properties list (not saving to file)
+     */
     public static void addProperty() {
         showProperties();
         System.out.print("Enter name of property to add: ");
@@ -56,13 +65,16 @@ public class MenuHelper {
         System.out.println("You are going to add property with name " + propName + " and value " + propValue + ". Are you sure (Yes/No)?");
         String confirmation = scanner.nextLine();
         if (confirmation.trim().equalsIgnoreCase("yes")) {
-            PropertiesHelper.setProperties(propName, propValue);
+            PropertiesHelper.setProperty(propName, propValue);
             System.out.println("You have successfully added property with name " + propName + " and value " + propValue + ".");
         } else {
             System.out.println("No confirmation was received. Reverting this change. Property with name " + propName + " and value " + propValue + " was not added.");
         }
     }
 
+    /**
+     * Saving current properties to file (default are new one)
+     */
     public static void saveProperties() {
         showProperties();
         System.out.println("Default properties file path is " + PropertiesHelper.getPathToProperties());
@@ -81,7 +93,7 @@ public class MenuHelper {
         } else {
             System.out.println("You are going to create new properties file. Enter path:");
             String path = scanner.nextLine();
-            if (!FileHelper.isValidPath(path)) {
+            if (!FileHelper.isPathValid(path)) {
                 System.out.println("Path you entered is invalid. Cancelling...");
             } else {
                 System.out.println("You are going to create new properties file with path " + path + ". Are you sure (Yes/No)?");
@@ -98,15 +110,21 @@ public class MenuHelper {
 
     }
 
+    /**
+     * Shows list of files and directories in default folder (took from properties)
+     */
     public static void showDefaultDirectoryFiles() {
         showDirectoryItems(PropertiesHelper.getDefaultFilePath());
     }
 
+    /**
+     * Shows list of files and directories in specified folder (path will be taken during this method)
+     */
     public static void showSpecifiedDirectoryFiles() {
         System.out.print("Please enter path to directory: ");
         Scanner scanner = new Scanner(System.in);
         String path = scanner.nextLine();
-        if (!FileHelper.isValidPath(path)) {
+        if (!FileHelper.isPathValid(path)) {
            System.out.println(ExceptionMessage.getFailedToValidatePathMessage(path) + " Canceling operation.");
         }
         if(!Files.isDirectory(Paths.get(path))) {
@@ -115,6 +133,9 @@ public class MenuHelper {
         showDirectoryItems(path);
     }
 
+    /**
+     * Selects file form default folder and solving it
+     */
     public static void selectFileFromDefaultDirectory() {
         List<String> files = FileHelper.getFiles(PropertiesHelper.getDefaultFilePath());
         showArrayItems(files);
@@ -134,11 +155,14 @@ public class MenuHelper {
         }
     }
 
+    /**
+     * Selects filefrom specified path (path will be taken during this method) and solving it
+     */
     public static void selectFileByPath() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter path to the file with " + PropertiesHelper.getDefaultExtension() + " extension: ");
         String path = scanner.nextLine();
-        if (!FileHelper.isValidPath(path)) {
+        if (!FileHelper.isPathValid(path)) {
             System.out.println(ExceptionMessage.getFailedToValidatePathMessage(path) + " Canceling operation.");
         }
         if(!Files.isRegularFile(Paths.get(path))) {
@@ -147,6 +171,9 @@ public class MenuHelper {
         readFileAndSolve(path);
     }
 
+    /**
+     * Exiting application with exit code 0
+     */
     public static void exitApplication() {
         System.out.println("Exiting application.");
         System.exit(0);

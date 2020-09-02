@@ -15,6 +15,14 @@ import java.util.stream.Collectors;
 
 public class FileHelper {
 
+    /**
+     * Read all lines from specified file and returns it as a list of Strings
+     *
+     * @param pathToFile
+     * Path where file is placed
+     * @return
+     * List of file's lines
+     */
     public static List<String> readFromFile(String pathToFile) {
         List<String> lines = Collections.emptyList();
         try {
@@ -25,11 +33,29 @@ public class FileHelper {
         return lines;
     }
 
+    /**
+     * Checks if file extension is equal to specified
+     *
+     * @param path
+     * Path to file to check
+     * @param extension
+     * Expected extension
+     * @return
+     * True if expected extension equals to actual, false if not
+     */
     public static boolean checkExtension(String path, String extension) {
         return path.substring(path.lastIndexOf('.') + 1).equalsIgnoreCase(extension);
     }
 
-    public static boolean isValidPath(String path) {
+    /**
+     * Checks if given path is valid by creating Path instance
+     *
+     * @param path
+     * Path to file to check
+     * @return
+     * True if path is valid, false if not
+     */
+    public static boolean isPathValid(String path) {
         try {
             Paths.get(path);
         } catch (InvalidPathException | NullPointerException ex) {
@@ -38,6 +64,13 @@ public class FileHelper {
         return true;
     }
 
+    /**
+     * Gets list of all directories from directory with specified path
+     * @param path
+     * Path to directory which content to read
+     * @return
+     * List of directory names
+     */
     public static List<String> getDirectories(String path) {
         File[] items = getItems(path);
         return Arrays.stream(items)
@@ -46,6 +79,13 @@ public class FileHelper {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets list of all files from directory with specified path
+     * @param path
+     * Path to directory which content to read
+     * @return
+     * List of file names
+     */
     public static List<String> getFiles(String path) {
         File[] items = getItems(path);
         return Arrays.stream(items)
@@ -54,8 +94,15 @@ public class FileHelper {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets list of all items from directory with specified path
+     * @param path
+     * Path to directory which content to read
+     * @return
+     * List of item names
+     */
     private static File[] getItems(String path) {
-        if(path.isEmpty() || !isValidPath(path)) {
+        if(path.isEmpty() || !isPathValid(path)) {
             System.err.println(ExceptionMessage.getFailedToValidatePathMessage(path));
             return new File[0];
         }

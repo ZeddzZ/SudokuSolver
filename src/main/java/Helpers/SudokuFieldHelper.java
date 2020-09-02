@@ -8,6 +8,14 @@ import java.util.List;
 public class SudokuFieldHelper {
     protected static int defaultValue = 0;
 
+    /**
+     * Parses list of lines to matrix of items
+     *
+     * @param fieldFromFile
+     * List of lines to parse
+     * @return
+     * Matrix ofg items, split by space, comma or semicolon
+     */
     public static String[][] parseFileToField(List<String> fieldFromFile) {
         String[][] field = new String[fieldFromFile.size()][];
         for (int i = 0; i < fieldFromFile.size(); i++) {
@@ -17,6 +25,14 @@ public class SudokuFieldHelper {
         return field;
     }
 
+    /**
+     * Parses matrix of strings to matrix of integers
+     *
+     * @param field
+     * Matrix of strings to parse
+     * @return
+     * Parsed matrix of integers
+     */
     public static int[][] parseStringField(String[][] field) {
         int[][] intField = new int[field.length][];
         for (int i = 0; i < field.length; i++) {

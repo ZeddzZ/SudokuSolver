@@ -10,23 +10,14 @@ public class PropertiesHelper {
     protected static String pathToProperties = "src/main/resources/config.properties";
     protected static Properties properties;
 
-    public static void initProperties() throws IOException {
-        FileInputStream fis = null;
+    public static void initProperties() throws PropertiesInitializeException {
         properties = new Properties();
-        try {
-            fis = new FileInputStream(pathToProperties);
+        try (FileInputStream fis = new FileInputStream(pathToProperties)) {
             properties.load(fis);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw new PropertiesInitializeException(ExceptionMessage.getWrongFilePathMessage(pathToProperties), e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new PropertiesInitializeException(ExceptionMessage.getFailedToParsePropertiesMessage(pathToProperties), e);
-        }
-        finally {
-            if(fis != null) {
-                fis.close();
-            }
         }
     }
 
@@ -34,26 +25,44 @@ public class PropertiesHelper {
         return pathToProperties;
     }
 
+    public static void setPathToProperties(String path) {
+        pathToProperties = path;
+    }
+
     public static Properties getProperties() {
         return properties;
-    }
-
-    public static boolean containProperty(String name) {
-        return !getProperty(name).equals("");
-    }
-
-    public static String getProperty(String propertyName) {
-        return properties.getProperty(propertyName, "");
     }
 
     public static void setProperties(Properties newProperties) {
         properties = newProperties;
     }
 
-    public static void setProperties(String propertyName, String value) {
+    public static String getProperty(String propertyName) {
+        return properties.getProperty(propertyName, "");
+    }
+
+    public static void setProperty(String propertyName, String value) {
         properties.setProperty(propertyName, value);
     }
 
+    /**
+     * Checks if current set of properties contains specified one
+     *
+     * @param name
+     * Name of property to check
+     * @return
+     * True if property exists, false if not
+     */
+    public static boolean containProperty(String name) {
+        return !getProperty(name).equals("");
+    }
+
+    /**
+     * Saves current set of properties to file
+     *
+     * @param path
+     * Path to file where to save properties
+     */
     public static void saveProperties(String path) {
         File file = new File(path);
         if(!file.exists()) {
@@ -95,6 +104,14 @@ public class PropertiesHelper {
         return getProperty("sudoku.extension");
     }
 
+    /**
+     * Casts property value to int, if possible
+     *
+     * @param propertyName
+     * Name of property to cast to int
+     * @return
+     * Integer value of property if possible to cast, 0 if not
+     */
     private static int getIntProperty(String propertyName) {
         String prop = getProperty(propertyName);
         if (!MathHelper.tryParseInt(prop)) {
