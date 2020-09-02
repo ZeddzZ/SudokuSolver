@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2708386c-d15f-40a4-8fe7-7758d7c989e5" name="Default Changelist" comment="Updated Menu section. Added comments and used builder pattern">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="hiddenUrls">
+      <set>
+        <option value="https://github.com/ZeddzZ/SudokuSolver.git" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1gizeZoAVe7GsABXDMWkwWeTEK6" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="SudokuSolver" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SudokuSolverTests.MyTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SudokuSolver" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="SudokuTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="SudokuTests" />
+      <option name="MAIN_CLASS_NAME" value="SudokuTests.SudokuSolverTests" />
+      <option name="METHOD_NAME" value="MyTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.SudokuSolverTests.MyTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2708386c-d15f-40a4-8fe7-7758d7c989e5" name="Default Changelist" comment="" />
+      <created>1598612296971</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1598612296971</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Updated Menu section. Added comments and used builder pattern">
+      <created>1599062403345</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1599062403345</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Updated Menu section. Added comments and used builder pattern" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated Menu section. Added comments and used builder pattern" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="627" y="277" key="#Project_Structure" timestamp="1598640162439">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="627" y="277" key="#Project_Structure/0.0.3440.1400@0.0.3440.1400" timestamp="1598640162439" />
+    <state x="601" y="358" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1598624406819">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="601" y="358" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.3440.1400@0.0.3440.1400" timestamp="1598624406819" />
+    <state x="952" y="387" key="#com.intellij.ide.util.MemberChooser" timestamp="1599061317070">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="952" y="387" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1400@0.0.3440.1400" timestamp="1599061317070" />
+    <state x="871" y="392" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog" timestamp="1598624287722">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="871" y="392" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog/0.0.3440.1400@0.0.3440.1400" timestamp="1598624287722" />
+    <state x="829" y="439" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1598982053401">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="829" y="439" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.3440.1400@0.0.3440.1400" timestamp="1598982053401" />
+    <state x="556" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1599057601609">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="556" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.3440.1400@0.0.3440.1400" timestamp="1599057601609" />
+    <state x="879" y="450" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1599051669759">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="879" y="450" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.3440.1400@0.0.3440.1400" timestamp="1599051669759" />
+    <state width="465" height="466" key="DebuggerActiveHint" timestamp="1599056764446">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="465" height="466" key="DebuggerActiveHint/0.0.3440.1400@0.0.3440.1400" timestamp="1599056764446" />
+    <state x="927" y="458" key="FileChooserDialogImpl" timestamp="1598624612058">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="927" y="458" key="FileChooserDialogImpl/0.0.3440.1400@0.0.3440.1400" timestamp="1598624612058" />
+    <state x="1019" y="601" width="476" height="298" key="Github.ShareDialog" timestamp="1599046085978">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="1019" y="601" width="476" height="298" key="Github.ShareDialog/0.0.3440.1400@0.0.3440.1400" timestamp="1599046085978" />
+    <state x="882" y="408" key="Github.UntrackedFilesDialog" timestamp="1599046197223">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="882" y="408" key="Github.UntrackedFilesDialog/0.0.3440.1400@0.0.3440.1400" timestamp="1599046197223" />
+    <state width="2239" height="490" key="GridCell.Tab.0.bottom" timestamp="1599062227289">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="2239" height="490" key="GridCell.Tab.0.bottom/0.0.3440.1400@0.0.3440.1400" timestamp="1599062227289" />
+    <state width="2239" height="490" key="GridCell.Tab.0.center" timestamp="1599062227289">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="2239" height="490" key="GridCell.Tab.0.center/0.0.3440.1400@0.0.3440.1400" timestamp="1599062227289" />
+    <state width="2239" height="490" key="GridCell.Tab.0.left" timestamp="1599062227289">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="2239" height="490" key="GridCell.Tab.0.left/0.0.3440.1400@0.0.3440.1400" timestamp="1599062227289" />
+    <state width="2239" height="490" key="GridCell.Tab.0.right" timestamp="1599062227289">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="2239" height="490" key="GridCell.Tab.0.right/0.0.3440.1400@0.0.3440.1400" timestamp="1599062227289" />
+    <state width="2239" height="490" key="GridCell.Tab.1.bottom" timestamp="1599062227289">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="2239" height="490" key="GridCell.Tab.1.bottom/0.0.3440.1400@0.0.3440.1400" timestamp="1599062227289" />
+    <state width="2239" height="490" key="GridCell.Tab.1.center" timestamp="1599062227289">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="2239" height="490" key="GridCell.Tab.1.center/0.0.3440.1400@0.0.3440.1400" timestamp="1599062227289" />
+    <state width="2239" height="490" key="GridCell.Tab.1.left" timestamp="1599062227289">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="2239" height="490" key="GridCell.Tab.1.left/0.0.3440.1400@0.0.3440.1400" timestamp="1599062227289" />
+    <state width="2239" height="490" key="GridCell.Tab.1.right" timestamp="1599062227289">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="2239" height="490" key="GridCell.Tab.1.right/0.0.3440.1400@0.0.3440.1400" timestamp="1599062227289" />
+    <state x="741" y="436" key="Vcs.Push.Dialog.v2" timestamp="1599062418166">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="741" y="436" key="Vcs.Push.Dialog.v2/0.0.3440.1400@0.0.3440.1400" timestamp="1599062418166" />
+    <state width="1154" height="703" key="XDebugger.FullValuePopup" timestamp="1598990502518">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state width="1154" height="703" key="XDebugger.FullValuePopup/0.0.3440.1400@0.0.3440.1400" timestamp="1598990502518" />
+    <state x="805" y="334" key="run.anything.popup" timestamp="1598985044832">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="805" y="334" key="run.anything.popup/0.0.3440.1400@0.0.3440.1400" timestamp="1598985044832" />
+    <state x="803" y="360" width="672" height="676" key="search.everywhere.popup" timestamp="1599060908141">
+      <screen x="0" y="0" width="3440" height="1400" />
+    </state>
+    <state x="803" y="360" width="672" height="676" key="search.everywhere.popup/0.0.3440.1400@0.0.3440.1400" timestamp="1599060908141" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$USER_HOME$/.jdks/openjdk-14/lib/src.zip!/java.base/java/util/Optional.java</url>
+          <line>140</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo typeName="Sudoku.SudokuField" fieldName="blockHeight" />
+        <PinnedItemInfo typeName="Menu.Menu" fieldName="menuItems" />
+        <PinnedItemInfo typeName="Sudoku.SudokuField" fieldName="field" />
+      </pinned-members>
+    </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="JUnit">
+        <watch expression="field" language="JAVA" />
+        <watch expression="possibleSolutions" language="JAVA" />
+        <watch expression="tempSolution.getField()" language="JAVA" />
+        <watch expression="emptyCells" language="JAVA" />
+        <watch expression="SudokuSolutions.getSolutions(ss.getInitialField())" language="JAVA" />
+        <watch expression="SudokuSolutions.getSolutions(initialField)" language="JAVA" />
+      </configuration>
+      <configuration name="Application">
+        <watch expression="new BaseMenuBuilder().addMenuItem(new MenuItem(&quot;Properties...&quot;)).addSubMenu()" language="JAVA" />
+        <watch expression="((Menu.SubMenuBuilder)this).menu" custom="Menu.SubMenuBuilder" />
+        <watch expression="menu.getMenuItems().get(menu.getMenuItems().size() - 1)" language="JAVA" />
+        <watch expression="mainMenu.getMenuItems().stream().map(el -&gt; el.getSubMenu().getParentMenu()).collect(Collectors.toList())" language="JAVA" custom="java.util.stream.Collectors" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
