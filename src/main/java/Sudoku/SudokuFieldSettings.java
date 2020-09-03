@@ -102,15 +102,15 @@ public class SudokuFieldSettings<T> {
 
 
     public static<T> SudokuFieldSettings<T> createSettings(int width, int height, int blockWidth, int blockHeight, Class<T> typeOfElements) {
-        return new SudokuFieldSettings<T>(width, height, blockWidth, blockHeight,
+        return new SudokuFieldSettings<>(width, height, blockWidth, blockHeight,
                 getListOfDefaultValues(typeOfElements, blockWidth * blockHeight), getDefaultValue(typeOfElements), typeOfElements);
     }
 
     public static final SudokuFieldSettings<Integer> DEFAULT_9_TO_9_INTEGER_SETTINGS
-            = new SudokuFieldSettings<>(9, 9, 3, 3, intPossibleValues, intDefaultValue, Integer.class);
+            = new SudokuFieldSettings<>(9, 9, 3, 3, intPossibleValues.subList(0, 9), intDefaultValue, Integer.class);
 
     public static final SudokuFieldSettings<String> DEFAULT_9_TO_9_STRING_SETTINGS
-            = new SudokuFieldSettings<>(9, 9, 3, 3, stringPossibleValues, stringDefaultValue, String.class);
+            = new SudokuFieldSettings<>(9, 9, 3, 3, stringPossibleValues.subList(0, 9), stringDefaultValue, String.class);
 
     public static final SudokuFieldSettings<Character> DEFAULT_4_TO_4_STRING_SETTINGS
             = new SudokuFieldSettings<>(4, 4, 2, 2, charPossibleValues.subList(0, 4), charDefaultValue, Character.class);

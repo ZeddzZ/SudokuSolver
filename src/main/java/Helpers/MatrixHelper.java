@@ -1,6 +1,8 @@
 package Helpers;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
+
 public class MatrixHelper {
     /**
      * Creates Matrix of size rowsCount * columnsCount of specified type
@@ -39,5 +41,50 @@ public class MatrixHelper {
             System.arraycopy(initialMatrix[i], 0, newField[i], 0, initialMatrix[i].length);
         }
         return newField;
+    }
+
+    /**
+     * Checks whether two matrices are equal or not
+     *
+     * @param matrixOne
+     * First matrix to check
+     * @param matrixTwo
+     * Second matrix to check
+     * @param <T>
+     * Type of elements in matrices
+     * @return
+     * True if matrices content are equal, false if not
+     */
+    public static<T> boolean areEqual(T[][] matrixOne, T[][] matrixTwo) {
+        if (matrixOne.length != matrixTwo.length) {
+            return false;
+        }
+        for(int i = 0; i < matrixOne.length; i++) {
+            if (matrixOne[i].length != matrixTwo[i].length) {
+                return false;
+            }
+            for(int j = 0; j < matrixOne[i].length; j++) {
+                if(!matrixOne[i][j].equals(matrixTwo[i][j])) {
+                    return  false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Initializes matrix with default value
+     *
+     * @param matrix
+     * Matrix to initialize
+     * @param value
+     * Default value
+     * @param <T>
+     * Type of elements in matrix
+     */
+    public static<T> void initMatrix(T[][] matrix, T value) {
+        for (T[] array : matrix) {
+            Arrays.fill(array, value);
+        }
     }
 }

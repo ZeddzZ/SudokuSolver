@@ -3,56 +3,56 @@ package Sudoku;
 import Exceptions.ExceptionMessage;
 import Exceptions.SudokuFieldInitializeException;
 import Helpers.MathHelper;
+import Helpers.MatrixHelper;
 import Helpers.Pair;
-import Helpers.SudokuFieldHelper;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class SudokuField {
+public class SudokuField<T> {
 
     protected int width;
     protected int height;
     protected int blockWidth;
     protected int blockHeight;
 
-    protected int[][] field;
-    protected int defaultValue = 0;
-    protected List<Integer> possibleValues = IntStream.rangeClosed(1, 9).boxed().collect(Collectors.toList());
+    protected T[][] field;
+    protected T defaultValue;
+    protected List<T> possibleValues;
+    protected Class<T> typeOfElements;
 
-    public SudokuField(int width, int height, int blockWidth, int blockHeight, boolean shouldInitValues) {
-        if(isWidthValid(width, blockWidth) && isHeightValid(height, blockHeight)) {
-            this.width = width;
-            this.height = height;
-            this.blockWidth = blockWidth;
-            this.blockHeight = blockHeight;
-            this.field = new int[this.height][this.width];
-            if (shouldInitValues) {
-                initField();
-            }
-        }
+    public SudokuField(int width, int height, int blockWidth, int blockHeight,  List<T> possibleValues, T defaultValue, Class<T> typeOfElements, T[][] field) {
+        this.width = width;
+        this.height = height;
+        this.blockWidth = blockWidth;
+        this.blockHeight = blockHeight;
+        this.defaultValue = defaultValue;
+        this.possibleValues = possibleValues;
+        this.typeOfElements = typeOfElements;
+        this.field = MatrixHelper.copyMatrix(field, this.typeOfElements);
     }
 
-    public SudokuField(int width, int height, int blockWidth, int blochHeight) {
-        this(width, height, blockWidth, blochHeight, true);
+    public SudokuField(int width, int height, int blockWidth, int blockHeight,  List<T> possibleValues, T defaultValue, Class<T> typeOfElements) {
+        this(width, height, blockWidth, blockHeight,
+                possibleValues, defaultValue, typeOfElements,
+                MatrixHelper.createMatrix(typeOfElements, width, height));
     }
 
-    public SudokuField(SudokuField sudokuField) {
-        this(sudokuField.getWidth(), sudokuField.getHeight(), sudokuField.getBlockWidth(), sudokuField.getBlockHeight(), false);
-        this.field = copyField(sudokuField.getField());
-        this.possibleValues = new ArrayList<>(sudokuField.possibleValues);
+    public SudokuField(SudokuFieldSettings<T> settings, T[][] field) {
+        this(settings.getWidth(), settings.getHeight(), settings.getBlockWidth(), settings.getBlockHeight(),
+                settings.getPossibleValues(), settings.getDefaultValue(), settings.getTypeOfElements(), field);
     }
 
-    public SudokuField(int[][] field, int blockWidth, int blockHeight) {
-        this(field[0].length, field.length, blockWidth, blockHeight, false);
-        if(SudokuFieldHelper.isFieldValid(field, possibleValues)) {
-            throw new SudokuFieldInitializeException(ExceptionMessage.getInvalidFieldValuesMessage(possibleValues));
-        }
-        this.field = copyField(field);
+    public SudokuField(SudokuFieldSettings<T> settings) {
+        this(settings,
+                MatrixHelper.createMatrix(settings.getTypeOfElements(), settings.getWidth(), settings.getHeight()));
+    }
+
+    @SuppressWarnings("CopyConstructorMissesField")
+    public SudokuField(SudokuField<T> sudokuField) {
+        this(sudokuField.getWidth(), sudokuField.getHeight(), sudokuField.getBlockWidth(), sudokuField.getBlockHeight(),
+                sudokuField.getPossibleValues(), sudokuField.getDefaultValue(), sudokuField.getTypeOfElements(),
+                sudokuField.getField());
     }
 
     public int getWidth() {
@@ -71,32 +71,36 @@ public class SudokuField {
         return blockHeight;
     }
 
-    public List<Integer> getPossibleValues() {
-        return possibleValues;
-    }
-
-    public int getDefaultValue() {
-        return defaultValue;
-    }
-
-    public int[][] getField() {
+    public T[][] getField() {
         return field;
     }
 
-    public int getFieldValue(int x, int y) {
+    public T getFieldValue(int x, int y) {
         return field[x][y];
     }
 
-    public void setFieldValue(int x, int y, int value) {
-        field[x][y] = value;
-    }
-
-    public int getFieldValue(Pair<Integer, Integer> coordinates) {
+    public T getFieldValue(Pair<Integer, Integer> coordinates) {
         return getFieldValue(coordinates.getFirst(), coordinates.getSecond());
     }
 
-    public void setFieldValue(Pair<Integer, Integer> coordinates, int value) {
+    public void setFieldValue(int x, int y, T value) {
+        field[x][y] = value;
+    }
+
+    public void setFieldValue(Pair<Integer, Integer> coordinates, T value) {
         setFieldValue(coordinates.getFirst(), coordinates.getSecond(), value);
+    }
+
+    public List<T> getPossibleValues() {
+        return possibleValues;
+    }
+
+    public T getDefaultValue() {
+        return defaultValue;
+    }
+
+    public Class<T> getTypeOfElements() {
+        return typeOfElements;
     }
 
     public Pair<Integer, Integer> getBlockStart(int x, int y) {
@@ -114,8 +118,8 @@ public class SudokuField {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int[] lines: field) {
-            for(int item: lines) {
+        for(T[] lines: field) {
+            for(T item: lines) {
                 sb.append(item);
                 sb.append(" ");
             }
@@ -125,6 +129,7 @@ public class SudokuField {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -132,38 +137,32 @@ public class SudokuField {
         if (!(o instanceof SudokuField)) {
             return false;
         }
-        SudokuField sudokuField = (SudokuField) o;
-        boolean areEqual =
+        SudokuField<T> sudokuField = (SudokuField<T>) o;
+
+        boolean linearSizesEqual =
                 width == sudokuField.width &&
                 height == sudokuField.height &&
                 blockWidth == sudokuField.blockWidth &&
                 blockHeight == sudokuField.blockHeight;
-        if (!areEqual) {
+        if (!linearSizesEqual) {
             return false;
         }
-        boolean arrayEquals = true;
-        for(int i = 0; i < field.length; i++) {
-            arrayEquals &= Arrays.equals(field[i], sudokuField.getField()[i]);
+
+        boolean fieldsEqual = MatrixHelper.areEqual(field, sudokuField.getField());
+        if (!fieldsEqual) {
+            return false;
         }
-        arrayEquals &= possibleValues.equals(sudokuField.possibleValues);
-        return  arrayEquals;
+
+        return possibleValues.equals(sudokuField.possibleValues);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(width, height, blockWidth, blockHeight, possibleValues);
-        for(int[] line: field) {
+        for(T[] line: field) {
             result += 31 * result + Arrays.hashCode(line);
         }
         return result;
-    }
-
-    private void initField() {
-        for(int i = 0; i < height; i++) {
-            for(int j = 0; j < width; j++) {
-                field[i][j] = defaultValue;
-            }
-        }
     }
 
     private boolean isWidthValid(int width, int blockWidth) {
@@ -196,15 +195,4 @@ public class SudokuField {
         }
         return true;
     }
-
-    private int[][] copyField(int[][] initialField) {
-        int[][] newField = new int[initialField.length][initialField[0].length];
-        for(int i = 0; i < initialField.length; i++) {
-            for (int j = 0; j < initialField[i].length; j++) {
-                newField[i][j] = initialField[i][j];
-            }
-        }
-        return newField;
-    }
-
 }

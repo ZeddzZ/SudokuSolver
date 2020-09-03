@@ -4,91 +4,99 @@ import Helpers.MapHelper;
 import Helpers.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SudokuSolver {
 
-    protected final SudokuField initialField;
-    protected SudokuField solutionField;
-    protected Set<Pair<Integer, Integer>> emptyCells;
-    protected Map<Pair<Integer, Integer>, List<Integer>> possibleSolutions;
-
-    public SudokuSolver(SudokuField sudokuField) {
-        this.initialField = new SudokuField(sudokuField);
-        this.solutionField = new SudokuField(sudokuField);
-        emptyCells = new HashSet<>();
-        possibleSolutions = new HashMap<>();
-
-        populateEmptyCells();
+    public static<T> Set<SudokuField<T>> solve(SudokuField<T> solutionField) {
+        Set<SudokuField<T>> solutions = new HashSet<>();
+        solve(solutionField, getEmptyCells(solutionField), solutions);
+        return solutions;
     }
 
-    /*public SudokuSolver(SudokuField sudokuField, Set<Pair<Integer, Integer>> emptyCells) {
-        this.initialField = new SudokuField(sudokuField);
-        this.emptyCells = new HashSet<>(emptyCells);
-        possibleSolutions = new HashMap<>();
-    }*/
-
-    public SudokuSolver(SudokuField sudokuField, SudokuField solutionField, Set<Pair<Integer, Integer>> emptyCells) {
-        this.initialField = new SudokuField(sudokuField);
-        this.solutionField = new SudokuField(solutionField);
-        this.emptyCells = new HashSet<>(emptyCells);
-        possibleSolutions = new HashMap<>();
+    public static<T> void printSolutions(Set<SudokuField<T>> solutions) {
+        if(solutions.size() == 0) {
+            System.out.println("No solutions were found.");
+            return;
+        } else if (solutions.size() == 1) {
+            System.out.println("Only 1 solution was found. Solution is:");
+        } else {
+            System.out.println(solutions.size()  + " solution were found. Solution are:");
+        }
+        System.out.println();
+        for(SudokuField<T> sf: solutions) {
+            System.out.println(sf.toString());
+        }
+        System.out.println();
     }
 
-    public SudokuField getInitialField() {
-        return initialField;
-    }
-
-    public SudokuField getSolutionField() {
-        return solutionField;
-    }
-
-    /**
-     * Sets for solution field cell with given coordinates specified value
-     *
-     * @param coordinates
-     * Coordinates of cell to update
-     * @param value
-     * New value to put
-     */
-    private void setFieldValue(Pair<Integer, Integer> coordinates, int value) {
-        solutionField.setFieldValue(coordinates, value);
-    }
-
-    public void solve() {
+    private static<T> void solve(SudokuField<T> currentField, Set<Pair<Integer, Integer>> emptyCells, Set<SudokuField<T>> solutions) {
         do {
             if(emptyCells.size() == 0) {
                 //System.out.println("Solution found!");
-                SudokuSolutions.addSolution(initialField, solutionField);
+                solutions.add(currentField);
                 return;
             }
-            addAllPossibleSolutions();
+            Map<Pair<Integer, Integer>, List<T>> possibleSolutions = addAllPossibleSolutions(currentField, emptyCells);
             if(possibleSolutions.size() == 0) {
                 //dead end, no solutions
                 return;
             }
-            Map<Pair<Integer, Integer>, List<Integer>> singleSolutions =
-                    MapHelper.filter(possibleSolutions, el -> el.getValue().size() == 1);
+            Map<Pair<Integer, Integer>, List<T>> singleSolutions =
+                    getSingleSolutions(possibleSolutions);
             if (singleSolutions.size() > 0) {
-                unambiguousMatch(singleSolutions);
-                clearPossibleSolutions();
+                unambiguousMatch(currentField, singleSolutions, emptyCells);
             } else {
-                ambiguousMatch();
+                ambiguousMatch(currentField, possibleSolutions, emptyCells, solutions);
                 return;
             }
         }while(true);
     }
 
     /**
-     * Goes through all empty cells and add all possible values
-     * fpr current cell to possibleSolutions List
+     * For all solutions that contain only one possible value go through specified cells and
+     * update solution field with this value, removing this cell from possibleSolutions Map and emptyCells List
+     *
+     * @param singleSolutions
+     * Map of cells that can be filled with only one value at this iteration.
      */
-    private void addAllPossibleSolutions() {
-        for (Pair<Integer, Integer> cell : emptyCells) {
-            for (int value : solutionField.getPossibleValues()) {
-                if (isPossibleToPlaceNumber(cell.getFirst(), cell.getSecond(), value)) {
-                    addPossibleSolution(cell, value);
-                }
-            }
+    private static<T> void unambiguousMatch(SudokuField<T> currentField, Map<Pair<Integer, Integer>, List<T>> singleSolutions, Set<Pair<Integer, Integer>> emptyCells) {
+        for(Pair<Integer, Integer> coordinates: singleSolutions.keySet()) {
+                currentField.setFieldValue(coordinates, singleSolutions.get(coordinates).get(0));
+                emptyCells.remove(coordinates);
+        }
+    }
+
+    /**
+     * From list of all cells with possible values count > 1
+     * We take cell with min possible values count.
+     * For each of such solutions we create new {@see SudkuSolver}
+     * with possible value and run {@see SudokuSolver#solve()} method for it
+     *
+     * e.g. : if cell [0,0] have possible solutions [1,2,3] we create 3 new solutions
+     * with already placed 1, 2 and 3 value to [0,0] position and run solve for them
+     */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    private static<T> void ambiguousMatch(SudokuField<T> currentField, Map<Pair<Integer, Integer>, List<T>> possibleSolutions, Set<Pair<Integer, Integer>> emptyCells, Set<SudokuField<T>> solutions) {
+        if (MapHelper.filter(possibleSolutions, el -> el.getValue().size() == 0).size() > 0) {
+            //Failed to solve, dead end
+            return;
+        }
+
+        Map.Entry<Pair<Integer, Integer>, List<T>> solution =
+                possibleSolutions.entrySet()
+                .stream()
+                .min(Comparator.comparing(el -> el.getValue().size()))
+                .get();
+
+        for(T possibleValue: solution.getValue()) {
+            SudokuField<T> newField = new SudokuField<>(currentField);
+            newField.setFieldValue(solution.getKey(), possibleValue);
+
+            Set<Pair<Integer, Integer>> newEmptyCells = new HashSet<>(emptyCells);
+            newEmptyCells.remove(solution.getKey());
+
+            solve(newField, newEmptyCells, solutions);
         }
     }
 
@@ -104,10 +112,10 @@ public class SudokuSolver {
      * @return
      * True if it possible to place specified value for given coordinates, false if not
      */
-    private boolean isPossibleToPlaceNumber(int rowNumber, int columnNumber, int value) {
-        return isVerticalPossible(columnNumber, value)
-                && isHorizontalPossible(rowNumber, value)
-                && isBlockPossible(solutionField.getBlockStart(rowNumber, columnNumber), value);
+    private static<T> boolean isPossibleToPlaceValue(SudokuField<T> solutionField, int rowNumber, int columnNumber, T value) {
+        return isVerticalPossible(solutionField, columnNumber, value)
+                && isHorizontalPossible(solutionField, rowNumber, value)
+                && isBlockPossible(solutionField, solutionField.getBlockStart(rowNumber, columnNumber), value);
     }
 
     /**
@@ -120,9 +128,9 @@ public class SudokuSolver {
      * @return
      * True if it possible to place specified value for given column, false if not
      */
-    private boolean isVerticalPossible(int column, int value) {
+    private static<T> boolean isVerticalPossible(SudokuField<T> solutionField, int column, T value) {
         for (int i = 0; i < solutionField.getHeight(); i++) {
-            if (solutionField.getFieldValue(i, column) == value) {
+            if (solutionField.getFieldValue(i, column).equals(value)) {
                 return false;
             }
         }
@@ -138,9 +146,9 @@ public class SudokuSolver {
      * @return
      * True if it possible to place specified value for given row, false if not
      */
-    private boolean isHorizontalPossible(int row, int value) {
+    private static<T> boolean isHorizontalPossible(SudokuField<T> solutionField, int row, T value) {
         for (int j = 0; j < solutionField.getWidth(); j++) {
-            if (solutionField.getFieldValue(row, j) == value) {
+            if (solutionField.getFieldValue(row, j).equals(value)) {
                 return false;
             }
         }
@@ -157,10 +165,10 @@ public class SudokuSolver {
      * @return
      * True if it possible to place specified value for given block, false if not
      */
-    private boolean isBlockPossible(Pair<Integer, Integer> blockStart, int value) {
+    private static<T> boolean isBlockPossible(SudokuField<T> solutionField, Pair<Integer, Integer> blockStart, T value) {
         for (int i = blockStart.getFirst(); i < blockStart.getFirst() + solutionField.getBlockHeight(); i++) {
             for (int j = blockStart.getSecond(); j < blockStart.getSecond() + solutionField.getBlockWidth(); j++) {
-                if (solutionField.getFieldValue(i, j) == value) {
+                if (solutionField.getFieldValue(i, j).equals(value)) {
                     return false;
                 }
             }
@@ -171,7 +179,8 @@ public class SudokuSolver {
     /**
      * Goes through all field and add all cell coordinates with default value to emptyCells List
      */
-    private void populateEmptyCells() {
+    private static<T> Set<Pair<Integer, Integer>> getEmptyCells(SudokuField<T> solutionField) {
+        Set<Pair<Integer, Integer>> emptyCells = new HashSet<>();
         for (int i =0; i < solutionField.getHeight(); i++) {
             for (int j = 0; j < solutionField.getWidth(); j++) {
                 if (solutionField.getFieldValue(i, j) == (solutionField.getDefaultValue())) {
@@ -179,71 +188,50 @@ public class SudokuSolver {
                 }
             }
         }
+        return emptyCells;
+    }
+
+    /**
+     * Goes through all empty cells and add all possible values
+     * for current cell to possibleSolutions List
+     */
+    private static<T> Map<Pair<Integer, Integer>, List<T>> addAllPossibleSolutions(SudokuField<T> solutionField, Set<Pair<Integer, Integer>> emptyCells) {
+        Map<Pair<Integer, Integer>, List<T>> possibleSolutions = new HashMap<>();
+        for (Pair<Integer, Integer> cell : emptyCells) {
+            for (T value : solutionField.getPossibleValues()) {
+                if (isPossibleToPlaceValue(solutionField, cell.getFirst(), cell.getSecond(), value)) {
+                    addPossibleSolution(possibleSolutions, cell, value);
+                }
+            }
+        }
+        return possibleSolutions;
     }
 
     /**
      * Adds a possible value for specified cell to possibleSolutions Map
      *
+     * @param possibleSolutions
+     * Map where to add elements
      * @param coordinates
      * Coordinates of the cell
      * @param value
      * Value that can be placed
+     * @param <T>
+     * Type of elements
+     * @return
+     * True if successfully added new possible solution, false if it already exists
      */
-    private void addPossibleSolution(Pair<Integer, Integer> coordinates, int value) {
+    private static<T> boolean addPossibleSolution(Map<Pair<Integer, Integer>, List<T>> possibleSolutions, Pair<Integer, Integer> coordinates, T value) {
         if (!possibleSolutions.containsKey(coordinates)) {
             possibleSolutions.put(coordinates, new ArrayList<>());
         }
-        possibleSolutions.get(coordinates).add(value);
+        return possibleSolutions.get(coordinates).add(value);
     }
 
-    /**
-     * For all solutions that contain only one possible value go through specified cells and
-     * update solution field with this value, removing this cell from possibleSolutions Map and emptyCells List
-     *
-     * @param singleSolutions
-     * Map of cells that can be filled with only one value at this iteration.
-     */
-    private void unambiguousMatch(Map<Pair<Integer, Integer>, List<Integer>> singleSolutions) {
-        for(Pair<Integer, Integer> coordinates: singleSolutions.keySet()) {
-                setFieldValue(coordinates, possibleSolutions.get(coordinates).get(0));
-                possibleSolutions.remove(coordinates);
-                emptyCells.remove(coordinates);
-        }
-    }
-
-    /**
-     * Removes all data from possible  solutions map
-     */
-    private void clearPossibleSolutions() {
-        for(Pair<Integer, Integer> coordinates: possibleSolutions.keySet()) {
-            possibleSolutions.get(coordinates).clear();
-        }
-        //TODO: is it possible to replace with this line?
-        //possibleSolutions.clear();
-    }
-
-    /**
-     * From list of all cells with possible values count > 1
-     * We take cell with min possible values count.
-     * For each of such solutions we create new {@see SudkuSolver}
-     * with possible value and run {@see SudokuSolver#solve()} method for it
-     *
-     * e.g. : if cell [0,0] have possible solutions [1,2,3] we create 3 new solutions
-     * with already placed 1, 2 and 3 value to [0,0] position and run solve for them
-     */
-    private void ambiguousMatch() {
-        if (MapHelper.filter(possibleSolutions, el -> el.getValue().size() == 0).size() > 0) {
-            //Failed to solve, dead end
-            return;
-            }
-        Map.Entry<Pair<Integer, Integer>, List<Integer>> solution =
-                MapHelper.min(possibleSolutions, Comparator.comparing(v -> v.getValue().size()));
-        for(int possibleValue: solution.getValue()) {
-            SudokuSolver tempSolution = new SudokuSolver(initialField, solutionField, emptyCells);
-            tempSolution.setFieldValue(solution.getKey(), possibleValue);
-            emptyCells.remove(solution.getKey());
-            tempSolution.emptyCells.remove(solution.getKey());
-            tempSolution.solve();
-        }
+    private static<T> Map<Pair<Integer, Integer>, List<T>> getSingleSolutions(Map<Pair<Integer, Integer>, List<T>> possibleSolutions) {
+        return possibleSolutions.entrySet()
+                .stream()
+                .filter(el -> el.getValue().size() == 1)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

@@ -2,15 +2,11 @@ package Helpers;
 
 import Exceptions.ExceptionMessage;
 import Sudoku.SudokuField;
-import Sudoku.SudokuSolutions;
 import Sudoku.SudokuSolver;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 
 public class MenuHelper {
 
@@ -184,15 +180,14 @@ public class MenuHelper {
             System.out.println(ExceptionMessage.getWrongFileExtensionMessage(path, PropertiesHelper.getDefaultExtension() + " Canceling operation."));
             return;
         }
-        SudokuField sudokuField = SudokuFieldHelper.getIntegerFieldFromFile(path);
+        SudokuField<Integer> sudokuField = SudokuFieldHelper.getIntegerFieldFromFile(path);
         System.out.println("Initial field is:");
         System.out.println();
         System.out.println(sudokuField.toString());
         System.out.println("Solving this sudoku...");
         System.out.println();
-        SudokuSolver sudokuSolver = new SudokuSolver(sudokuField);
-        sudokuSolver.solve();
-        SudokuSolutions.printSolutions(sudokuSolver.getInitialField());
+        Set<SudokuField<Integer>> solutions = SudokuSolver.solve(sudokuField);
+        SudokuSolver.printSolutions(solutions);
     }
 
     private static void showDirectoryItems(String path) {

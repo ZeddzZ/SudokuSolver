@@ -2,7 +2,7 @@ package SudokuTests;
 
 import Helpers.PropertiesHelper;
 import Sudoku.SudokuField;
-import Sudoku.SudokuSolutions;
+import Sudoku.SudokuFieldSettings;
 import Sudoku.SudokuSolver;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class SudokuSolverTests {
 
-    public int[][] field = {
+    public Integer[][] field = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -23,18 +23,15 @@ public class SudokuSolverTests {
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
     };
-    public SudokuField sf;
-    public SudokuSolver ss;
+    public SudokuField<Integer> sf;
     @Before
     public void init() throws IOException {
         PropertiesHelper.initProperties();
-        sf = new SudokuField(field, PropertiesHelper.getBlockWidth(), PropertiesHelper.getBlockHeight());
-        ss = new SudokuSolver(sf);
+        sf = new SudokuField<>(SudokuFieldSettings.DEFAULT_9_TO_9_INTEGER_SETTINGS, field);
     }
 
         @Test
         public void MyTest() {
-            ss.solve();
-            System.out.println(SudokuSolutions.getSolutions(ss.getInitialField()).toString());
+            SudokuSolver.printSolutions(SudokuSolver.solve(sf));
         }
 }
