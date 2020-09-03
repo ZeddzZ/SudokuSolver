@@ -2,6 +2,7 @@ package Sudoku;
 
 import Helpers.MapHelper;
 import Helpers.Pair;
+import Helpers.PropertiesHelper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,8 +10,12 @@ import java.util.stream.Collectors;
 public class SudokuSolver {
 
     public static<T> Set<SudokuField<T>> solve(SudokuField<T> solutionField) {
+        return solve(solutionField, PropertiesHelper.getDefaultSolutionsCount());
+    }
+
+    public static<T> Set<SudokuField<T>> solve(SudokuField<T> solutionField, int maxSolutionsCount) {
         Set<SudokuField<T>> solutions = new HashSet<>();
-        solve(solutionField, getEmptyCells(solutionField), solutions);
+        solve(solutionField, getEmptyCells(solutionField), solutions, maxSolutionsCount);
         return solutions;
     }
 
@@ -30,8 +35,12 @@ public class SudokuSolver {
         System.out.println();
     }
 
-    private static<T> void solve(SudokuField<T> currentField, Set<Pair<Integer, Integer>> emptyCells, Set<SudokuField<T>> solutions) {
+    private static<T> void solve(SudokuField<T> currentField, Set<Pair<Integer, Integer>> emptyCells, Set<SudokuField<T>> solutions, int maxSolutionsCount) {
         do {
+            if(solutions.size() >= maxSolutionsCount) {
+                //Desired solutions count achieved, returning
+                return;
+            }
             if(emptyCells.size() == 0) {
                 //System.out.println("Solution found!");
                 solutions.add(currentField);
@@ -47,7 +56,7 @@ public class SudokuSolver {
             if (singleSolutions.size() > 0) {
                 unambiguousMatch(currentField, singleSolutions, emptyCells);
             } else {
-                ambiguousMatch(currentField, possibleSolutions, emptyCells, solutions);
+                ambiguousMatch(currentField, possibleSolutions, emptyCells, solutions, maxSolutionsCount);
                 return;
             }
         }while(true);
@@ -77,8 +86,8 @@ public class SudokuSolver {
      * with already placed 1, 2 and 3 value to [0,0] position and run solve for them
      */
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    private static<T> void ambiguousMatch(SudokuField<T> currentField, Map<Pair<Integer, Integer>, List<T>> possibleSolutions, Set<Pair<Integer, Integer>> emptyCells, Set<SudokuField<T>> solutions) {
-        if (MapHelper.filter(possibleSolutions, el -> el.getValue().size() == 0).size() > 0) {
+    private static<T> void ambiguousMatch(SudokuField<T> currentField, Map<Pair<Integer, Integer>, List<T>> possibleSolutions, Set<Pair<Integer, Integer>> emptyCells, Set<SudokuField<T>> solutions, int maxSolutionsCount) {
+        if (getEmptySolutions(possibleSolutions).size() > 0) {
             //Failed to solve, dead end
             return;
         }
@@ -96,7 +105,7 @@ public class SudokuSolver {
             Set<Pair<Integer, Integer>> newEmptyCells = new HashSet<>(emptyCells);
             newEmptyCells.remove(solution.getKey());
 
-            solve(newField, newEmptyCells, solutions);
+            solve(newField, newEmptyCells, solutions, maxSolutionsCount);
         }
     }
 
@@ -229,9 +238,17 @@ public class SudokuSolver {
     }
 
     private static<T> Map<Pair<Integer, Integer>, List<T>> getSingleSolutions(Map<Pair<Integer, Integer>, List<T>> possibleSolutions) {
+        return getSolutionsWithSpecifiedCount(possibleSolutions, 1);
+    }
+
+    private static<T> Map<Pair<Integer, Integer>, List<T>> getEmptySolutions(Map<Pair<Integer, Integer>, List<T>> possibleSolutions) {
+        return getSolutionsWithSpecifiedCount(possibleSolutions, 0);
+    }
+
+    private static<T> Map<Pair<Integer, Integer>, List<T>> getSolutionsWithSpecifiedCount(Map<Pair<Integer, Integer>, List<T>> possibleSolutions, int count) {
         return possibleSolutions.entrySet()
                 .stream()
-                .filter(el -> el.getValue().size() == 1)
+                .filter(el -> el.getValue().size() == count)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

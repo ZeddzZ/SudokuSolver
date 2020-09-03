@@ -104,6 +104,10 @@ public class PropertiesHelper {
         return getProperty("sudoku.extension");
     }
 
+    public static int getDefaultSolutionsCount() {
+        return getIntProperty("sudoku.default_solutions_count");
+    }
+
     /**
      * Casts property value to int, if possible
      *
