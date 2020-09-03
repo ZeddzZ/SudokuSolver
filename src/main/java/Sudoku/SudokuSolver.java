@@ -1,10 +1,11 @@
 package Sudoku;
 
-import Helpers.MapHelper;
 import Helpers.Pair;
 import Helpers.PropertiesHelper;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
 public class SudokuSolver {
@@ -14,7 +15,7 @@ public class SudokuSolver {
     }
 
     public static<T> Set<SudokuField<T>> solve(SudokuField<T> solutionField, int maxSolutionsCount) {
-        Set<SudokuField<T>> solutions = new HashSet<>();
+        Set<SudokuField<T>> solutions = new CopyOnWriteArraySet<>();
         solve(solutionField, getEmptyCells(solutionField), solutions, maxSolutionsCount);
         return solutions;
     }
@@ -70,10 +71,10 @@ public class SudokuSolver {
      * Map of cells that can be filled with only one value at this iteration.
      */
     private static<T> void unambiguousMatch(SudokuField<T> currentField, Map<Pair<Integer, Integer>, List<T>> singleSolutions, Set<Pair<Integer, Integer>> emptyCells) {
-        for(Pair<Integer, Integer> coordinates: singleSolutions.keySet()) {
-                currentField.setFieldValue(coordinates, singleSolutions.get(coordinates).get(0));
-                emptyCells.remove(coordinates);
-        }
+        singleSolutions.keySet().parallelStream().forEach(coordinates -> {
+            currentField.setFieldValue(coordinates, singleSolutions.get(coordinates).get(0));
+            emptyCells.remove(coordinates);
+        });
     }
 
     /**
@@ -98,16 +99,11 @@ public class SudokuSolver {
                 .min(Comparator.comparing(el -> el.getValue().size()))
                 .get();
 
-        for(T possibleValue: solution.getValue()) {
-            SudokuField<T> newField = new SudokuField<>(currentField);
-            newField.setFieldValue(solution.getKey(), possibleValue);
-
-            Set<Pair<Integer, Integer>> newEmptyCells = new HashSet<>(emptyCells);
-            newEmptyCells.remove(solution.getKey());
-
-            solve(newField, newEmptyCells, solutions, maxSolutionsCount);
-        }
+       solution.getValue().parallelStream().forEach(possibleValue ->
+                initNewSolve(currentField, solution.getKey(), possibleValue, emptyCells, solutions, maxSolutionsCount));
     }
+
+
 
     /**
      * Checks if it possible for specified value to be placed on received coordinates
@@ -138,7 +134,7 @@ public class SudokuSolver {
      * True if it possible to place specified value for given column, false if not
      */
     private static<T> boolean isVerticalPossible(SudokuField<T> solutionField, int column, T value) {
-        for (int i = 0; i < solutionField.getHeight(); i++) {
+        for(int i = 0; i < solutionField.getHeight(); i++) {
             if (solutionField.getFieldValue(i, column).equals(value)) {
                 return false;
             }
@@ -156,7 +152,7 @@ public class SudokuSolver {
      * True if it possible to place specified value for given row, false if not
      */
     private static<T> boolean isHorizontalPossible(SudokuField<T> solutionField, int row, T value) {
-        for (int j = 0; j < solutionField.getWidth(); j++) {
+        for(int j = 0; j < solutionField.getWidth(); j++) {
             if (solutionField.getFieldValue(row, j).equals(value)) {
                 return false;
             }
@@ -175,8 +171,8 @@ public class SudokuSolver {
      * True if it possible to place specified value for given block, false if not
      */
     private static<T> boolean isBlockPossible(SudokuField<T> solutionField, Pair<Integer, Integer> blockStart, T value) {
-        for (int i = blockStart.getFirst(); i < blockStart.getFirst() + solutionField.getBlockHeight(); i++) {
-            for (int j = blockStart.getSecond(); j < blockStart.getSecond() + solutionField.getBlockWidth(); j++) {
+        for(int i = blockStart.getFirst(); i < blockStart.getFirst() + solutionField.getBlockHeight(); i++) {
+            for(int j = blockStart.getSecond(); j < blockStart.getSecond() + solutionField.getBlockWidth(); j++) {
                 if (solutionField.getFieldValue(i, j).equals(value)) {
                     return false;
                 }
@@ -189,9 +185,9 @@ public class SudokuSolver {
      * Goes through all field and add all cell coordinates with default value to emptyCells List
      */
     private static<T> Set<Pair<Integer, Integer>> getEmptyCells(SudokuField<T> solutionField) {
-        Set<Pair<Integer, Integer>> emptyCells = new HashSet<>();
-        for (int i =0; i < solutionField.getHeight(); i++) {
-            for (int j = 0; j < solutionField.getWidth(); j++) {
+        Set<Pair<Integer, Integer>> emptyCells = new CopyOnWriteArraySet<>();
+        for(int i =0; i < solutionField.getHeight(); i++) {
+            for(int j = 0; j < solutionField.getWidth(); j++) {
                 if (solutionField.getFieldValue(i, j) == (solutionField.getDefaultValue())) {
                     emptyCells.add(new Pair<>(i, j));
                 }
@@ -205,14 +201,10 @@ public class SudokuSolver {
      * for current cell to possibleSolutions List
      */
     private static<T> Map<Pair<Integer, Integer>, List<T>> addAllPossibleSolutions(SudokuField<T> solutionField, Set<Pair<Integer, Integer>> emptyCells) {
-        Map<Pair<Integer, Integer>, List<T>> possibleSolutions = new HashMap<>();
-        for (Pair<Integer, Integer> cell : emptyCells) {
-            for (T value : solutionField.getPossibleValues()) {
-                if (isPossibleToPlaceValue(solutionField, cell.getFirst(), cell.getSecond(), value)) {
-                    addPossibleSolution(possibleSolutions, cell, value);
-                }
-            }
-        }
+        Map<Pair<Integer, Integer>, List<T>> possibleSolutions = new ConcurrentHashMap<>();
+        emptyCells.parallelStream().forEach(cell -> solutionField.getPossibleValues().stream()
+                .filter(value -> isPossibleToPlaceValue(solutionField, cell.getFirst(), cell.getSecond(), value))
+                .forEach(value -> addPossibleSolution(possibleSolutions, cell, value)));
         return possibleSolutions;
     }
 
@@ -235,6 +227,38 @@ public class SudokuSolver {
             possibleSolutions.put(coordinates, new ArrayList<>());
         }
         return possibleSolutions.get(coordinates).add(value);
+    }
+
+    /**
+     * If there are only cells with > 1 possible solutions,
+     * we go in cycle of possible values and for each possible value
+     * create new field and initiate new solve run for it
+     *
+     * This method created to ease work with forEach(...) and  parallelStream()
+     *
+     * @param currentField
+     * Current state of sudoku field
+     * @param cell
+     * Cell coordinates which has multiple possible solutions
+     * @param possibleValue
+     * possible solution that we are working with
+     * @param emptyCells
+     * List of empty cells
+     * @param solutions
+     * List of solutions already found for initial field
+     * @param maxSolutionsCount
+     * max count of solutions that we will process
+     * @param <T>
+     * Type of cell value
+     */
+    private static<T> void initNewSolve(SudokuField<T> currentField, Pair<Integer, Integer> cell, T possibleValue, Set<Pair<Integer, Integer>> emptyCells, Set<SudokuField<T>> solutions, int maxSolutionsCount) {
+        SudokuField<T> newField = new SudokuField<>(currentField);
+        newField.setFieldValue(cell, possibleValue);
+
+        Set<Pair<Integer, Integer>> newEmptyCells = new CopyOnWriteArraySet<>(emptyCells);
+        newEmptyCells.remove(cell);
+
+        solve(newField, newEmptyCells, solutions, maxSolutionsCount);
     }
 
     private static<T> Map<Pair<Integer, Integer>, List<T>> getSingleSolutions(Map<Pair<Integer, Integer>, List<T>> possibleSolutions) {

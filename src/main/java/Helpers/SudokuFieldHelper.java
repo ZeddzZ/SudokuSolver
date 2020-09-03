@@ -98,7 +98,7 @@ public class SudokuFieldHelper {
     }
 
     public static SudokuField<Integer> getIntegerFieldFromFile(String path, SudokuFieldSettings<Integer> settings) {
-        List<String> lines = FileHelper.readFromFile(path);
+        List<String> lines = FileHelper.readLinesFromFile(path);
         String[][] items = parseFileToField(lines);
         Integer[][] cells = parseStringToIntegerField(items);
         return new SudokuField<>(settings, cells);
@@ -109,10 +109,11 @@ public class SudokuFieldHelper {
     }
 
     public static SudokuField<String> getFieldFromFile(String path, SudokuFieldSettings<String> settings) {
-        List<String> lines = FileHelper.readFromFile(path);
+        List<String> lines = FileHelper.readLinesFromFile(path);
         String[][] items = parseFileToField(lines);
         return new SudokuField<>(settings, items);
     }
+
     public static SudokuField<String> getFieldFromFile(String path) {
         return getFieldFromFile(path, SudokuFieldSettings.DEFAULT_9_TO_9_STRING_SETTINGS);
     }

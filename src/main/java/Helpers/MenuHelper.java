@@ -152,7 +152,7 @@ public class MenuHelper {
     }
 
     /**
-     * Selects filefrom specified path (path will be taken during this method) and solving it
+     * Selects file from specified path (path will be taken during this method) and solving it
      */
     public static void selectFileByPath() {
         Scanner scanner = new Scanner(System.in);

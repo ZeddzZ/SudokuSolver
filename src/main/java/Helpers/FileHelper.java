@@ -23,7 +23,7 @@ public class FileHelper {
      * @return
      * List of file's lines
      */
-    public static List<String> readFromFile(String pathToFile) {
+    public static List<String> readLinesFromFile(String pathToFile) {
         List<String> lines = Collections.emptyList();
         try {
             lines = Files.readAllLines(Paths.get(pathToFile), StandardCharsets.UTF_8);
@@ -55,6 +55,7 @@ public class FileHelper {
      * @return
      * True if path is valid, false if not
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isPathValid(String path) {
         try {
             Paths.get(path);

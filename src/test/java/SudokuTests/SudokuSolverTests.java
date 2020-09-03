@@ -9,9 +9,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-
 public class SudokuSolverTests {
-
+    public int repeatCount = 100000;
     public Integer[][] field = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -30,8 +29,9 @@ public class SudokuSolverTests {
         sf = new SudokuField<>(SudokuFieldSettings.DEFAULT_9_TO_9_INTEGER_SETTINGS, field);
     }
 
-        @Test
-        public void MyTest() {
-            SudokuSolver.printSolutions(SudokuSolver.solve(sf));
-        }
+    @Test
+    public void MyTest1() {
+        SudokuSolver.solve(sf, repeatCount);
+        //SudokuSolver.printSolutions(SudokuSolver.solve(sf, repeatCount));
+    }
 }
