@@ -1,5 +1,8 @@
 package Menu;
 
+import Loggers.ConsoleShower;
+import Loggers.IShower;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,18 +10,32 @@ public class Menu {
 
     protected Menu parentMenu;
     protected List<MenuItem> menuItems;
+    protected IShower menuShower;
 
-    public Menu(List<MenuItem> menuItems, Menu parentMenu) {
+    public Menu(List<MenuItem> menuItems, Menu parentMenu, IShower menuShower) {
         this.menuItems = menuItems;
         this.parentMenu = parentMenu;
+        this.menuShower = menuShower;
+    }
+
+    public Menu(List<MenuItem> menuItems, Menu parentMenu) {
+        this(menuItems, parentMenu, new ConsoleShower());
+    }
+
+    public Menu(List<MenuItem> menuItems, IShower menuShower) {
+        this(menuItems, null, menuShower);
     }
 
     public Menu(List<MenuItem> menuItems) {
-        this(menuItems, null);
+        this(menuItems, new ConsoleShower());
+    }
+
+    public Menu(IShower menuShower) {
+        this(new ArrayList<>(), null, menuShower);
     }
 
     public Menu() {
-       this(new ArrayList<>(), null);
+        this(new ConsoleShower());
     }
 
     public List<MenuItem> getMenuItems() {
@@ -31,6 +48,14 @@ public class Menu {
 
     public Menu getParentMenu() {
         return parentMenu;
+    }
+
+    public void setMenuShower(IShower menuShower) {
+        this.menuShower = menuShower;
+    }
+
+    public IShower getMenuShower() {
+        return menuShower;
     }
 
     /**
@@ -77,17 +102,13 @@ public class Menu {
      * Prints current menu to console
      */
     public void showMenu() {
-        System.out.println();
+        menuShower.show();
         for(int i = 0; i < menuItems.size(); i++) {
-            System.out.println( (i + 1) + ". " + menuItems.get(i).getName());
+            menuShower.show( (i + 1) + ". " + menuItems.get(i).getName());
         }
         if(parentMenu != null) {
-            System.out.println( (menuItems.size() + 1) + ". Back...");
+            menuShower.show( (menuItems.size() + 1) + ". Back...");
         }
-        System.out.println();
+        menuShower.show();
     }
-
-
-
-
 }

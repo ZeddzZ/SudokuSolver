@@ -1,9 +1,20 @@
 package Menu.Builders;
 
+import Loggers.IShower;
 import Menu.Menu;
 import Menu.MenuItem;
 
 public interface IMenuBuilder {
+
+    /**
+     * Sets class to be responsible for showing menu items
+     *
+     * @param shower
+     * Instance of class that will show menu items
+     * @return
+     * Instance of builder
+     */
+    IMenuBuilder setMenuShower(IShower shower);
 
     /**
      * Adds menu item to the end of current Menu

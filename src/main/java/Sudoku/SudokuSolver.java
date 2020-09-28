@@ -20,20 +20,21 @@ public class SudokuSolver {
         return solutions;
     }
 
-    public static<T> void printSolutions(Set<SudokuField<T>> solutions) {
+    public static<T> String printSolutions(Set<SudokuField<T>> solutions) {
+        StringBuilder sb = new StringBuilder();
         if(solutions.size() == 0) {
-            System.out.println("No solutions were found.");
-            return;
+            sb.append("No solutions were found.").append(System.lineSeparator());
+            return sb.toString();
         } else if (solutions.size() == 1) {
-            System.out.println("Only 1 solution was found. Solution is:");
+            sb.append(("Only 1 solution was found. Solution is:")).append(System.lineSeparator());
         } else {
-            System.out.println(solutions.size()  + " solution were found. Solution are:");
+            sb.append(solutions.size()).append(" solution were found. Solution are:").append(System.lineSeparator());
         }
         System.out.println();
         for(SudokuField<T> sf: solutions) {
-            System.out.println(sf.toString());
+            sb.append(sf.toString()).append(System.lineSeparator());
         }
-        System.out.println();
+        return sb.append(System.lineSeparator()).toString();
     }
 
     private static<T> void solve(SudokuField<T> currentField, Set<Pair<Integer, Integer>> emptyCells, Set<SudokuField<T>> solutions, int maxSolutionsCount) {

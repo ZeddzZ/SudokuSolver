@@ -1,5 +1,6 @@
 package Menu.Builders;
 
+import Loggers.IShower;
 import Menu.Menu;
 import Menu.MenuItem;
 
@@ -18,6 +19,19 @@ public class MenuBuilder implements IMenuBuilder {
                 menu.getMenuItems().size() == 0
                 ? null
                 : menu.getMenuItems().get(menu.getMenuItems().size() - 1);
+    }
+
+    /**
+     * Sets class to be responsible for showing menu items
+     *
+     * @param shower
+     * Instance of class that will show menu items
+     * @return
+     * Instance of builder
+     */
+    public IMenuBuilder setMenuShower(IShower shower) {
+        menu.setMenuShower(shower);
+        return this;
     }
 
     /**
